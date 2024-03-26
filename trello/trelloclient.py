@@ -235,11 +235,17 @@ class TrelloClient(object):
             query_params['key'] = self.api_key
             query_params['token'] = self.api_secret
 
-        # perform the HTTP requests, if possible uses OAuth authentication
-        response = self.http_service.request(http_method, url, params=query_params,
-                                             headers=headers, data=data,
+        response = None
+        if http_method == 'GET':
+            response = self.http_service.request(http_method, url, params=query_params,
+                                             headers=headers, 
                                              auth=self.oauth, files=files,
                                              proxies=self.proxies)
+        else:
+            response = self.http_service.request(http_method, url, params=query_params,
+                                             headers=headers, data=data,
+                                             auth=self.oauth, files=files,
+                                             proxies=self.proxies)    
 
         if response.status_code == 401:
             raise Unauthorized("%s at %s" % (response.text, url), response)
